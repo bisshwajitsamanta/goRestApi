@@ -1,17 +1,22 @@
 package main
 
 import (
+	"context"
 	"fmt"
-	"goRestApi/internal/db"
+	db2 "goRestApi/internal/db"
 )
 
 func Run() error {
 	fmt.Println("Starting our Application")
-	_, err := db.NewDatabase()
+	db, err := db2.NewDatabase()
 	if err != nil {
-		fmt.Println("Failed to connect to the Database")
+		fmt.Println("Failed to connect to Database")
 		return err
 	}
+	if err := db.Ping(context.Background()); err != nil {
+		return err
+	}
+
 	return nil
 }
 

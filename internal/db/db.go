@@ -1,6 +1,7 @@
 package db
 
 import (
+	"context"
 	"fmt"
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
@@ -30,4 +31,8 @@ func NewDatabase() (*Database, error) {
 	return &Database{
 		Client: dbConn,
 	}, nil
+}
+
+func (d *Database) Ping(ctx context.Context) error {
+	return d.Client.PingContext(ctx)
 }
