@@ -15,7 +15,7 @@ type Database struct {
 // NewDatabase - Structure Function
 func NewDatabase() (*Database, error) {
 	connectionString := fmt.Sprintf(
-		"Host=%s port=%s dbname=%s password=%s sslmode=%s",
+		"Host=%s port=%s user=%s dbname=%s password=%s sslmode=%s",
 		os.Getenv("DB_HOST"),
 		os.Getenv("DB_PORT"),
 		os.Getenv("DB_USERNAME"),
