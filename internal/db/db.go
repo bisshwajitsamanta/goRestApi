@@ -3,19 +3,23 @@ package db
 import (
 	"context"
 	"fmt"
+	"os"
+
 	"github.com/jmoiron/sqlx"
 	_ "github.com/lib/pq"
-	"os"
+	log "github.com/sirupsen/logrus"
 )
 
 type Database struct {
 	Client *sqlx.DB
 }
 
-// NewDatabase - Structure Function
+// NewDatabase - returns a pointer to a database object
 func NewDatabase() (*Database, error) {
+	log.Info("Setting up new database connection")
+
 	connectionString := fmt.Sprintf(
-		"Host=%s port=%s user=%s dbname=%s password=%s sslmode=%s",
+		"host=%s port=%s user=%s dbname=%s password=%s sslmode=%s",
 		os.Getenv("DB_HOST"),
 		os.Getenv("DB_PORT"),
 		os.Getenv("DB_USERNAME"),
@@ -23,16 +27,17 @@ func NewDatabase() (*Database, error) {
 		os.Getenv("DB_PASSWORD"),
 		os.Getenv("SSL_MODE"),
 	)
-	// It connects to Postgres with the connection string
-	dbConn, err := sqlx.Connect("postgres", connectionString)
+
+	db, err := sqlx.Connect("postgres", connectionString)
 	if err != nil {
-		return &Database{}, fmt.Errorf("Could not connect to database:%w", err)
+		return &Database{}, fmt.Errorf("could not connect to database: %w", err)
 	}
+
 	return &Database{
-		Client: dbConn,
+		Client: db,
 	}, nil
 }
 
 func (d *Database) Ping(ctx context.Context) error {
-	return d.Client.PingContext(ctx)
+	return d.Client.DB.PingContext(ctx)
 }
