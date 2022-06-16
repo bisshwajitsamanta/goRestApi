@@ -3,6 +3,7 @@ package db
 import (
 	"fmt"
 	"github.com/jmoiron/sqlx"
+	_ "github.com/lib/pq"
 	"os"
 )
 
@@ -10,6 +11,7 @@ type Database struct {
 	Client *sqlx.DB
 }
 
+// NewDatabase - Structure Function
 func NewDatabase() (*Database, error) {
 	connectionString := fmt.Sprintf(
 		"Host=%s port=%s dbname=%s password=%s sslmode=%s",
@@ -20,6 +22,12 @@ func NewDatabase() (*Database, error) {
 		os.Getenv("DB_PASSWORD"),
 		os.Getenv("SSL_MODE"),
 	)
-	fmt.Println(connectionString)
-	return &Database{}, nil
+	// It connects to Postgres with the connection string
+	dbConn, err := sqlx.Connect("postgres", connectionString)
+	if err != nil {
+		return &Database{}, fmt.Errorf("Could not connect to database:%w", err)
+	}
+	return &Database{
+		Client: dbConn,
+	}, nil
 }
