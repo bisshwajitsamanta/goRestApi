@@ -1,7 +1,6 @@
 package main
 
 import (
-	"context"
 	"fmt"
 	db2 "goRestApi/internal/db"
 )
@@ -13,9 +12,12 @@ func Run() error {
 		fmt.Println("Failed to connect to Database")
 		return err
 	}
-	if err := db.Ping(context.Background()); err != nil {
+
+	if err := db.MigrateDB(); err != nil {
+		fmt.Println("Failed to Up Migrations")
 		return err
 	}
+
 	fmt.Println("Successfully Connected and Pinged Database")
 	return nil
 }
